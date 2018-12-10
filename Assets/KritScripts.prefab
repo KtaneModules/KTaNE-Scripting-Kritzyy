@@ -3944,7 +3944,7 @@ TextMesh:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1364681902908142}
-  m_Text: return;
+  m_Text: return<color=#ADADAD>;</color>
   m_OffsetZ: 0
   m_CharacterSize: 1
   m_LineSpacing: 1

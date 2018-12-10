@@ -27,6 +27,8 @@ public class KritScript : MonoBehaviour
 
     public KMBombInfo BombInfo;
 
+    GUIStyle style = new GUIStyle();
+
     List<string> UsingPrograms = new List<string>
     {
         "KTaNE", "KMAPI", "BombGenerator", "ScriptAPI", "System", "UnityEngine", "System.Linq", "EncryptedProgram", "KMMods", "IntGenerator"
@@ -111,10 +113,11 @@ public class KritScript : MonoBehaviour
     Vector3 CharVarPosition = new Vector3(0.2633f, 0.5100001f, -0.08900001f);
     Vector3 ResetValuePosition = new Vector3(0.205f, 0.5100001f, -0.09799998f);
 
-    private readonly string TwitchHelpMessage = "Empty";
+    private readonly string TwitchHelpMessage = "NAN";
 
     void Awake()
     {
+        style.richText = true;
         moduleID = moduleIdCounter++;
         Using1Selectable.OnInteract = ChangeUsing1;
         Using2Selectable.OnInteract = ChangeUsing2;
@@ -396,7 +399,7 @@ public class KritScript : MonoBehaviour
             }
             VariableTxtMsh.text = VariableNameValue + " = ";
             VariableValueTxtMsh.color = new Color32(34, 123, 156, 255);
-            VariableValueTxtMsh.text = BoolVariableValue.ToString().ToLowerInvariant() + ";";
+            VariableValueTxtMsh.text = BoolVariableValue.ToString().ToLowerInvariant() + "<color=#ADADAD>;</color>";
 
             IntVariableValue = Random.Range(1, 51);
             FloatVariableValue = Random.Range(1f, 50f);
@@ -412,7 +415,7 @@ public class KritScript : MonoBehaviour
             VariableTxtMsh.text = VariableNameValue + " = ";
             ValueObj.transform.localPosition = new Vector3(0.3022f, 0.5100001f, -0.09799998f);
             VariableValueTxtMsh.color = new Color32(205, 147, 118, 255);
-            VariableValueTxtMsh.text = "\"" + CharVariableValue.ToString() + "\"" + ";";
+            VariableValueTxtMsh.text = "\"" + CharVariableValue.ToString() + "\"" + "<color=#ADADAD>;</color>";
 
             IntVariableValue = Random.Range(1, 51);
             FloatVariableValue = Random.Range(1f, 50f);
@@ -545,7 +548,7 @@ public class KritScript : MonoBehaviour
         else if (VariableKindValue == "char")
         {
             Operator = "==";
-            Condition.text = "(" + VariableNameValue + " " + Operator + " " + "\"" +CharLetterGenerated + "\"" + ")";
+            Condition.text = "(" + VariableNameValue + " " + Operator + " " + "<color=#CD9376FF>\"" + CharLetterGenerated + "\"</color>" + ")";
         }
 
         if (FirstAction)
@@ -798,7 +801,6 @@ public class KritScript : MonoBehaviour
 
     void ActionGenerator()
     {
-
         ActionGen = Random.Range(0, 6);
         Action = PossibleActions[ActionGen];
         switch (Action)
@@ -1025,7 +1027,7 @@ public class KritScript : MonoBehaviour
                 {
                     VariableKindValue = "bool";
                     VariableObj.transform.localPosition = BoolVarPosition;
-                    VariableValueTxtMsh.text = BoolVariableValue.ToString().ToLowerInvariant() + ";";
+                    VariableValueTxtMsh.text = BoolVariableValue.ToString().ToLowerInvariant() + "<color=#ADADAD>;</color>";
                     VariableValueTxtMsh.color = new Color32(34, 123, 156, 255);
                     break;
                 }
@@ -1033,7 +1035,7 @@ public class KritScript : MonoBehaviour
                 {
                     VariableKindValue = "char";
                     VariableObj.transform.localPosition = CharVarPosition;
-                    VariableValueTxtMsh.text = "\"" + CharVariableValue.ToString() + "\"" + ";";
+                    VariableValueTxtMsh.text = "\"" + CharVariableValue.ToString() + "\"" + "<color=#ADADAD>;</color>";
                     VariableValueTxtMsh.color = new Color32(205, 147, 118, 255);
                     break;
                 }
@@ -1098,13 +1100,13 @@ public class KritScript : MonoBehaviour
             case 1:
                 {
                     MethodType = "void";
-                    ReturnStatement.text = "return;";
+                    ReturnStatement.text = "return<color=#ADADAD>;</color>";
                     break;
                 }
             case 2:
                 {
                     MethodType = "bool";
-                    ReturnStatement.text = "return false;";
+                    ReturnStatement.text = "return false<color=#ADADAD>;</color>";
                     break;
                 }
         }
