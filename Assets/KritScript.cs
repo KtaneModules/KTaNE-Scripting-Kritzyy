@@ -3,6 +3,7 @@ using KModkit;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 public class KritScript : MonoBehaviour
 {
@@ -49,7 +50,7 @@ public class KritScript : MonoBehaviour
     {
         "OnSolve()", "Explosion()", "TimerGenerator()", "HandleStrikes()", "OnStrike()", "HandleSolves()", "GenerateEdgework()"
     };
-    public List<string> PossibleActions = new List<string>
+    List<string> PossibleActions = new List<string>
     {
         "HandleSolve();", "HandleStrike();", "Strike();", "Solve();", "OnStrike();", "OnSolve();"
     };
@@ -57,9 +58,6 @@ public class KritScript : MonoBehaviour
     {
         "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
     };
-
-
-
 
     string UsingProgram1Value, UsingProgram2Value, UsingProgram3Value;
     string VariableKindValue, VariableNameValue;
@@ -84,12 +82,12 @@ public class KritScript : MonoBehaviour
     int BoolConditionValueGen;
     int ActionGen;
     int VariableNumber;
-    public int ActionNumber;
+    int ActionNumber;
     int BoolValueGen;
     int IntNumberGenerator;
     int OperatorGen = 0;
     int Batteries, Ports, FirstDigitSerial, LastDigitSerial;
-    public int SolvedModules;
+    int SolvedModules;
     int ScriptNr;
 
     float FloatVariableValue;
@@ -101,8 +99,8 @@ public class KritScript : MonoBehaviour
     bool VennDiagram1, VennDiagram2, VennDiagram3;
     bool IsUsing1Necessary, IsUsing2Necessary, IsUsing3Necessary;
     bool Using1ShouldBeNecessary, Using2ShouldBeNecessary, Using3ShouldBeNecessary;
-    public bool BoolVariableValue;
-    public bool BoolConditionValue;
+    bool BoolVariableValue;
+    bool BoolConditionValue;
     bool FirstVar = true;
     bool FirstVal = true;
     bool FirstAction = true;
@@ -113,7 +111,275 @@ public class KritScript : MonoBehaviour
     Vector3 CharVarPosition = new Vector3(0.2633f, 0.5100001f, -0.08900001f);
     Vector3 ResetValuePosition = new Vector3(0.205f, 0.5100001f, -0.09799998f);
 
-    private readonly string TwitchHelpMessage = "NAN";
+    private readonly string TwitchHelpMessage = "To set a directive, type !{0} set using1/using2/using3 true/false. To set the variable, type !{0} set var int/float/bool/char (To cycle between variables, type !{0} cyclevar). To set the method, type !{0} set method void/bool. To set the action, type !{0} set action <Action>. Lastly, to run the script, type !{0} run.";
+
+    IEnumerator ProcessTwitchCommand(string Command)
+    {
+        Command = Command.ToLowerInvariant().Trim();
+
+        if (Command.StartsWith("set"))
+        {
+            if (Command.Contains("using1"))
+            {
+                if (Command.EndsWith("true"))
+                {
+                    //Setting using directive 1 to true
+                    if (IsUsing1Necessary)
+                    {
+                        //Directive 1 is already true. Not setting.
+                        yield return "sendtochaterror Directive 1 is already true.";
+                    }
+                    else
+                    {
+                        //Directive 1 will be set to true
+                        yield return null;
+                        yield return new[] { Using1Selectable };
+                    }
+                }
+                else if (Command.EndsWith("false"))
+                {
+                    //Setting using directive 1 to false
+                    if (!IsUsing1Necessary)
+                    {
+                        //Directive 1 is already false. Not setting.
+                        yield return "sendtochaterror Directive 1 is already false.";
+                    }
+                    else
+                    {
+                        //Directive 1 will be set to false
+                        yield return null;
+                        yield return new[] { Using1Selectable };
+                    }
+                }
+                else if (Command.EndsWith("using1"))
+                {
+                    //Throwing up an error, because the order of the command was incorrect.
+                    yield return "sendtochaterror Incorrect order. First place the using directive, then the condition for it.";
+                }
+                else
+                {
+                    //Throwing up an error, because no condition was given.
+                    yield return "sendtochaterror No condition was given. You need to define what the using directive's condition should be.";
+                }
+            }
+            else if (Command.Contains("using2"))
+            {
+                if (Command.EndsWith("true"))
+                {
+                    //Setting using directive 2 to true
+                    if (IsUsing2Necessary)
+                    {
+                        //Directive 2 is already true. Not setting.
+                        yield return "sendtochaterror Directive 2 is already true.";
+                    }
+                    else
+                    {
+                        //Directive 2 will be set to true.
+                        yield return null;
+                        yield return new[] { Using2Selectable };
+                    }
+                }
+                else if (Command.EndsWith("false"))
+                {
+                    //Setting using directive 2 to false
+                    if (!IsUsing2Necessary)
+                    {
+                        //Directive 2 is already false. Not setting.
+                        yield return "sendtochaterror Directive 2 is already false.";
+                    }
+                    else
+                    {
+                        //Directive 2 will be set to false.
+                        yield return null;
+                        yield return new[] { Using2Selectable };
+                    }
+                }
+                else if (Command.EndsWith("using2"))
+                {
+                    //Throwing up an error, because the order of the command was incorrect.
+                    yield return "sendtochaterror Incorrect order. First place the using directive, then the condition for it.";
+                }
+                else
+                {
+                    //Throwing up an error, because no condition was given.
+                    yield return "sendtochaterror No condition was given. You need to define what the using directive's condition should be.";
+                }
+            }
+            else if (Command.Contains("using3"))
+            {
+                if (Command.EndsWith("true"))
+                {
+                    //Setting using directive 3 to true
+                    if (IsUsing3Necessary)
+                    {
+                        //Directive 2 is already true. Not setting.
+                        yield return "sendtochaterror Directive 3 is already true.";
+                    }
+                    else
+                    {
+                        //Directive 3 will be set to true.
+                        yield return null;
+                        yield return new[] { Using3Selectable };
+                    }
+                }
+                else if (Command.EndsWith("false"))
+                {
+                    //Setting using directive 3 to false
+                    if (!IsUsing3Necessary)
+                    {
+                        //Directive 3 is already false. Not setting.
+                        yield return "sendtochaterror Directive 2 is already true.";
+                    }
+                    else
+                    {
+                        //Directive 3 will be set to true.
+                        yield return null;
+                        yield return new[] { Using3Selectable };
+                    }
+                }
+                else if (Command.EndsWith("using3"))
+                {
+                    //Throwing up an error, because the order of the command was incorrect.
+                    yield return "sendtochaterror Incorrect order. First place the using directive, then the condition for it.";
+                }
+                else
+                {
+                    //Throwing up an error, because no condition was given.
+                    yield return "sendtochaterror No condition was given. You need to define what the using directive's condition should be.";
+                }
+            }
+            else if (Command.Contains("var"))
+            {
+                //Changing the variable
+                if (Command.EndsWith("int"))
+                {
+                    //Changing to int
+                    VariableNumber = 0;
+                    yield return null;
+                    yield return new[] { VarBtn };
+                }
+                else if (Command.EndsWith("float"))
+                {
+                    //Changing to float
+                    VariableNumber = 1;
+                    yield return null;
+                    yield return new[] { VarBtn };
+                }
+                else if (Command.EndsWith("bool"))
+                {
+                    //changing to bool
+                    VariableNumber = 2;
+                    yield return null;
+                    yield return new[] { VarBtn };
+                }
+                else if (Command.EndsWith("char"))
+                {
+                    //Changing to char
+                    VariableNumber = 3;
+                    yield return null;
+                    yield return new[] { VarBtn };
+                }
+                else
+                {
+                    //Throwing up an error, because no variable was given
+                    yield return "sendtochaterror Couldn't change the variable because none were given, or it wasn't valid.";
+                }
+            }
+            else if (Command.Contains("method"))
+            {
+                if (Command.EndsWith("void"))
+                {
+                    MethodNumber = 0;
+                    yield return null;
+                    yield return new[] { MethodBtn };
+                }
+                if (Command.EndsWith("bool"))
+                {
+                    MethodNumber = 1;
+                    yield return null;
+                    yield return new[] { MethodBtn };
+                }
+                else
+                {
+                    yield return "sendtochaterror Couldn't change the method because no valid methods were given.";
+                    //throwing up an error, because no (valid) method type was given.
+                }
+            }
+            else if (Command.Contains("action"))
+            {
+                //Changing the action
+                if (Command.EndsWith("handlesolve()"))
+                {
+                    ActionNumber = 0;
+                    yield return null;
+                    yield return new[] { ActionBtn };
+                }
+                else if (Command.EndsWith("handlestrike()"))
+                {
+                    ActionNumber = 1;
+                    yield return null;
+                    yield return new[] { ActionBtn };
+                }
+                else if (Command.EndsWith("onsolve()"))
+                {
+                    ActionNumber = 4;
+                    yield return null;
+                    yield return new[] { ActionBtn };
+                }
+                else if (Command.EndsWith("onstrike()"))
+                {
+                    ActionNumber = 5;
+                    yield return null;
+                    yield return new[] { ActionBtn };
+                }
+                else if (Command.EndsWith("solve()"))
+                {
+                    ActionNumber = 2;
+                    yield return null;
+                    yield return new[] { ActionBtn };
+                }
+                else if (Command.EndsWith("strike()"))
+                {
+                    ActionNumber = 3;
+                    yield return null;
+                    yield return new[] { ActionBtn };
+                }
+                else
+                {
+                    yield return "sendtochaterror Couldn't change the action because none were given, the given action was invalid or the valid action didn't have brackets. Valid options are HandleSolve(), HandleStrike(), Solve(), Strike(), OnSolve() and OnStrike().";
+                    //throwing up an error, because no (valid) action was given.
+                }
+            }
+            else
+            {
+                //Throwing up an error, because no directive, variable, or action was given
+                yield return "sendtochaterror No actions were given. You need to define if a directive, variable or action should be changed.";
+            }
+        }
+        else  if (Command.Equals("cyclevar"))
+        {
+            yield return null;
+            yield return new[] { VarBtn };
+            yield return new WaitForSecondsRealtime(1.5f);
+            yield return null;
+            yield return new[] { VarBtn };
+            yield return new WaitForSecondsRealtime(1.5f);
+            yield return null;
+            yield return new[] { VarBtn };
+            yield return new WaitForSecondsRealtime(1.5f);
+            yield return null;
+            yield return new[] { VarBtn };
+        }
+        else if (Command.StartsWith("run"))
+        {
+            yield return null;
+            yield return new[] { RunBtn };
+        }
+        else
+        {
+            yield return "sendtochaterror The command \"" + Command + "\" does not exist in the current context.";
+        }
+    }
 
     void Awake()
     {
