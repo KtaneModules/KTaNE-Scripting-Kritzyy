@@ -998,6 +998,14 @@ public class KritScript : MonoBehaviour
             Using3ShouldBeNecessary = false;
             Debug.LogFormat("[Scripting #{0}] Using directive 3 should be unnecessary.", moduleID);
         }
+        else
+        {
+            //None were true
+            Using1ShouldBeNecessary = true;
+            Using2ShouldBeNecessary = true;
+            Using3ShouldBeNecessary = true;
+            Debug.LogFormat("[Scripting #{0}] No using directives are unnecessary.", moduleID);
+        }
 
         //Second of all: Variables.
         if (IntVariableValue < LastDigitSerial)
