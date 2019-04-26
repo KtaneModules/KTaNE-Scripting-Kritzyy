@@ -393,7 +393,6 @@ public class KritScript : MonoBehaviour
         ActionBtn.OnInteract = ChangeAction;
         RunBtn.OnInteract = RunScript;
         ScriptNr = 1;
-        StartCoroutine("CheckSolvedModules");
     }
     void Start()
     {
@@ -821,27 +820,6 @@ public class KritScript : MonoBehaviour
             ActionGenerator();
     }
 
-    IEnumerator CheckSolvedModules()
-    {
-        for (int i = 0; i < 6; i++)
-        {
-            SolvedModules = BombInfo.GetSolvedModuleNames().Count() % 2;
-            if (SolvedModules % 2 == 0)
-            {
-                MethodTypeShouldBe = "void";
-            }
-            else
-            {
-                MethodTypeShouldBe = "bool";
-            }
-            if (i == 5)
-            {
-                StartCoroutine("CheckSolvedModules");
-            }
-            yield return new WaitForSecondsRealtime(1);
-        }
-    }
-
     IEnumerator StatusIncorrectShow()
     {
         for (int i = 0; i < 3; i++)
@@ -884,12 +862,15 @@ public class KritScript : MonoBehaviour
         if (VennDiagram1)
         {
             //Blue was true.
+            Debug.LogFormat("[Scripting #{0}] Diagram 1 is correct.", moduleID);
             if (VennDiagram2)
             {
                 //Red was also true.
+                Debug.LogFormat("[Scripting #{0}] Diagram 2 is correct.", moduleID);
                 if (VennDiagram3)
                 {
                     //All are true.
+                    Debug.LogFormat("[Scripting #{0}] Diagram 3 is correct.", moduleID);
                     //All are unnecessary.
                     Using1ShouldBeNecessary = false;
                     Using2ShouldBeNecessary = false;
@@ -899,6 +880,7 @@ public class KritScript : MonoBehaviour
                 else
                 {
                     //Green wasn't true, but the others were.
+                    Debug.LogFormat("[Scripting #{0}] Diagram 3 is incorrect.", moduleID);
                     //Exception time...
                     if (BombInfo.GetBatteryCount() % 2 == 0)
                     {
@@ -923,6 +905,8 @@ public class KritScript : MonoBehaviour
             else if (VennDiagram3)
             {
                 //Both blue and green were true. Red wasn't.
+                Debug.LogFormat("[Scripting #{0}] Diagram 2 is correct.", moduleID);
+                Debug.LogFormat("[Scripting #{0}] Diagram 3 is correct.", moduleID);
                 //Exception time...
                 if (BombInfo.GetSerialNumberNumbers().Last() >= 5)
                 {
@@ -945,7 +929,8 @@ public class KritScript : MonoBehaviour
             }
             else
             {
-                //Only blue was true
+                //Only blue was true 
+                Debug.LogFormat("[Scripting #{0}] Only diagram 1 is correct.", moduleID);
                 //Only 1 is unnecessary
                 Using1ShouldBeNecessary = false;
                 Using2ShouldBeNecessary = true;
@@ -956,11 +941,14 @@ public class KritScript : MonoBehaviour
         else if (VennDiagram2)
         {
             //Red was correct. Blue wasn't
+            Debug.LogFormat("[Scripting #{0}] Diagram 1 is incorrect.", moduleID);
             if (VennDiagram3)
             {
                 //Green and red were correct.
+                Debug.LogFormat("[Scripting #{0}] Diagram 2 is correct.", moduleID);
+                Debug.LogFormat("[Scripting #{0}] Diagram 3 is correct.", moduleID);
                 //Exception time...
-                if (BombInfo.GetIndicators().Count() > BombInfo.GetSerialNumberLetters().Last())
+                if (BombInfo.GetIndicators().Count() > BombInfo.GetSerialNumberNumbers().Last())
                 {
                     //The amount of indicators was more than the last digit of the serial
                     //Both 2 and 3 are unnecessary.
@@ -982,6 +970,7 @@ public class KritScript : MonoBehaviour
             else
             {
                 //Only red was correct.
+                Debug.LogFormat("[Scripting #{0}] Only diagram 2 is correct.", moduleID);
                 //Only 2 is unnecessary.
                 Using1ShouldBeNecessary = true;
                 Using2ShouldBeNecessary = false;
@@ -992,6 +981,7 @@ public class KritScript : MonoBehaviour
         else if (VennDiagram3)
         {
             //Only green was true
+            Debug.LogFormat("[Scripting #{0}] Only diagram 3 is correct.", moduleID);
             //Only 3 is unnecessary.
             Using1ShouldBeNecessary = true;
             Using2ShouldBeNecessary = true;
@@ -1001,6 +991,7 @@ public class KritScript : MonoBehaviour
         else
         {
             //None were true
+            Debug.LogFormat("[Scripting #{0}] None of the diagrams are correct.", moduleID);
             Using1ShouldBeNecessary = true;
             Using2ShouldBeNecessary = true;
             Using3ShouldBeNecessary = true;
@@ -1129,7 +1120,7 @@ public class KritScript : MonoBehaviour
             {
                 if (IsUsing3Necessary == Using3ShouldBeNecessary)
                 {
-                    Debug.LogFormat("[Scripting #{0}] All directives are correct! Checking directives...", moduleID);
+                    Debug.LogFormat("[Scripting #{0}] All directives are correct! Checking variables...", moduleID);
                     CheckVar();
                 }
                 else
@@ -1174,6 +1165,15 @@ public class KritScript : MonoBehaviour
     {
         Debug.LogFormat("[Scripting #{0}] Submitted: Method {1}", moduleID, MethodType);
         Debug.LogFormat("[Scripting #{0}] Amount of solved modules: {1}", moduleID, SolvedModules);
+        SolvedModules = BombInfo.GetSolvedModuleNames().Count() % 2;
+        if (SolvedModules % 2 == 0)
+        {
+            MethodTypeShouldBe = "void";
+        }
+        else
+        {
+            MethodTypeShouldBe = "bool";
+        }
         if (MethodType == MethodTypeShouldBe)
         {
             Debug.LogFormat("[Scripting #{0}] Method type is correct! Checking action...", moduleID);
